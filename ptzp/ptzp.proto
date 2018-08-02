@@ -5,7 +5,7 @@ package ptzp;
 import "google/protobuf/empty.proto";
 
 service PTZService {
-	rpc GetPTZPosInfo (google.protobuf.Empty) returns (PTZPosInfo) {}
+        rpc GetPTZPosInfo (PtzCmdPar) returns (PTZPosInfo) {}
 	rpc PanLeft(PtzCmdPar) returns (PtzCommandResult) {}
 	rpc PanRight(PtzCmdPar) returns (PtzCommandResult) {}
 	rpc TiltUp(PtzCmdPar) returns (PtzCommandResult) {}
@@ -15,8 +15,16 @@ service PTZService {
 	rpc ZoomIn(PtzCmdPar) returns (PtzCommandResult) {}
 	rpc ZoomOut(PtzCmdPar) returns (PtzCommandResult) {}
 	rpc ZoomStop(PtzCmdPar) returns (PtzCommandResult) {}
-
-	rpc GetHeads(google.protobuf.Empty) returns (PtzHeadInfo) {}
+        rpc PresetGo(PresetCmd) returns (PtzCommandResult) {}
+        rpc PresetSave(PresetCmd) returns (PtzCommandResult) {}
+        rpc PresetDelete(PresetCmd) returns (PtzCommandResult) {}
+        rpc PatrolSave(PatrolCmd) returns (PtzCommandResult) {}
+        rpc PatrolDelete(PatrolCmd) returns (PtzCommandResult) {}
+        rpc PatrolRun(PatrolCmd) returns (PtzCommandResult) {}
+        rpc PatrolStop(PatrolCmd) returns (PtzCommandResult) {}
+        rpc GetSettings(Settings) returns (Settings) {}
+        rpc SetSettings(Settings) returns (Settings) {}
+        rpc GetHeads(google.protobuf.Empty) returns (PtzHeadInfo) {}
 }
 
 message PtzHeadInfo {
@@ -37,17 +45,39 @@ message PtzHead {
 	repeated Capability capabilities = 1;
 	Status status = 2;
 	int32 head_id = 3;
+        Settings settings = 4;
 }
 
 message PtzCmdPar {
 	float pan_speed = 1;
 	float tilt_speed = 2;
 	float zoom_speed = 3;
-
 	float pan_abs = 4;
 	float tilt_abs = 5;
-
 	int32 head_id = 6;
+}
+
+message PresetCmd{
+        int32 preset_id = 1;
+        string preset_name = 2;
+        int32 pt_id = 3;
+        int32 z_id = 4;
+}
+
+message PatrolCmd{
+        int32 patrol_id = 1;
+        string patrol_name = 2;
+        repeated PresetInterval presetIntervalList = 3;
+}
+
+message PresetInterval{
+    int32 preset_id = 1;
+    int32 interval = 2;
+}
+
+message Settings{
+    int32 head_id = 1;
+    bytes settingsJson = 2;
 }
 
 message PtzCommandResult {
@@ -63,3 +93,4 @@ message PTZPosInfo {
 	int32 tilt_pos = 2;
 	int32 zoom_pos = 3;
 }
+
